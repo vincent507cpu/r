@@ -1,5 +1,8 @@
 ###########################################################################################
-
+# I wrote these codes to analyze Hyatt hotels,
+# published the analysis result in my blog,
+# https://vincent507.wordpress.com/2018/07/16/full-guide-of-world-of-hyatt/
+###########################################################################################
 library(tidyverse)
 setwd("~/Desktop")
 chart <- read_csv("Hyatt_Properties_Mar_2016.csv", col_names = TRUE)
