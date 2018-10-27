@@ -1,4 +1,4 @@
-#This script is from a project titled "PROJECT: PHYLLOTAXIS: DRAW FLOWERS USING MATHEMATICS" on DataCamp.
+#This script is for a project titled "PROJECT: PHYLLOTAXIS: DRAW FLOWERS USING MATHEMATICS" on DataCamp.
 
 # This sets plot images to a nice size.
 options(repr.plot.width = 4, repr.plot.height = 4)
