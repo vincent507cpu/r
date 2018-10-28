@@ -34,8 +34,8 @@ monthly <- monthly %>%
 head(months)
 
 # Plot monthly proportion of deaths
-ggplot(monthly) +
-    geom_line(aes(x = date, y = proportion_deaths)) +
+ggplot(monthly, aes(x = date, y = proportion_deaths)) +
+    geom_line() +
     labs(x= 'date', y = 'proportion_deaths')
     
 # From this date handwashing was made mandatory
