@@ -9,6 +9,7 @@ library(tidyverse)
 setwd("~/Desktop")
 chart <- read_csv("chart.csv", col_names = TRUE)
 
+#draw a bar plot to show category distribution of different brand
 graph <- chart %>%
   group_by(Category) %>%
   summarise(Number = n()) %>%
@@ -20,14 +21,17 @@ mytheme <- theme(plot.title = element_text(family = "Helvetica", face = "bold", 
 
 print(graph + mytheme + labs(title = "Number of hotels under each category", x = "Category", y = "Number") + scale_x_continuous(breaks = seq(1, 8, 1)))
 
+#hotel numbers of different brand
 table1 <- chart %>%
   group_by(Brand) %>%
   summarise(n = n())
 
+#different of point requirement between new and old system
 table2 <- chart %>%
   group_by(Difference) %>%
   summarise(n())
-  
+
+#chart of number of hotels in different brands under different categories  
 AC <- chart %>%
   filter(Brand == "AC Hotels by Marriott") %>%
   group_by(Category) %>%
@@ -196,6 +200,7 @@ Category <- AC %>%
   full_join(W, by = "Category") %>%
   full_join(Westin, by = "Category")
 
+#hotels point requirement increases more than 14,000 points
 Difference <- chart %>%
   arrange(desc(Difference)) %>%
   filter(Difference >= 14000) %>%
@@ -203,10 +208,12 @@ Difference <- chart %>%
   filter(Current != 70000) %>%
   select(Name)
 
+#hotels among top category
 Difference2 <- chart %>%
   filter(New == 85000)  %>%
   select(Name)
 
+#hotels that point requirement decreases more than 10,000 points and requires more than 50,000 points in newsystem
 Difference3 <- chart %>%
   arrange(desc(Difference)) %>%
   filter(Difference <= -10000) %>%
@@ -219,16 +226,19 @@ Difference4 <- chart %>%
   select(Name, Difference, Current, New) %>%
   filter(New >= 50000) %>%
   filter(Difference <= -10000)
- 
+
+#hotels in US that can be redeemed by free night certificate from SPG Luxury card
 US50000 <- chart %>%
   filter(New == 50000, Country == "USA", Brand %in% c(
     "Marriott", "W Hotels", "Sheraton", "Westin", "Luxury Collection", "JW Marriott", 
     "Autograph Collection", "Ritz-Carton"))
 
+#hotels in China that can be redeemed by free night certificate from any card
 CN <- chart %>%
   filter(Country == "China", New %in% c(35000, 50000, 60000), !str_detect(Name, "Airport")) %>%
   select(Name, New)
 
+#hotels in hot places around the world that can be redeemed by free night certificate from any card
 LA <- chart %>%
   filter(str_detect(Name, "Los Angeles|Hollywood|Beverly Hills"), !str_detect(Name, "Airport"), New %in% c(35000, 50000, 60000)) %>%
   select(Name, New)
@@ -288,6 +298,7 @@ DC <- chart %>%
   filter(str_detect(Name, "Washington"), !str_detect(Name, "Airport"), New %in% c(35000, 50000, 60000)) %>%
   select(Name, New)
 
+#hotels in US and China that can be redeemed by free night certificate from travel package
 cnus <- chart %>%
   filter(Country %in% c("USA", "China"), New == 25000) %>%
   select(Name)
