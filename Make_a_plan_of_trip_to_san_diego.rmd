@@ -22,8 +22,7 @@ place <- bind_rows(bal, midway, coro, cab, ljc, ot, auto, usgrant, cy, ap)
 
 ```{r}
 library(ggmap)
-register_google(key = 'AIzaSyDs2SMtmm9kYI-wp4K4oEgh_eRW42BxdTU') #use your key!
-#register_google(key = "my_google_key_here")
+register_google(key = "my_google_key_here") #use your key!
 library(ggrepel)
 
 geoc <- geocode(place$name)
