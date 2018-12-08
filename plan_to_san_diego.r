@@ -1,9 +1,7 @@
-```{r}
+
 #if(!requireNamespace("devtools")) install.packages("devtools")
 #devtools::install_github("dkahle/ggmap", ref = "tidyup") #recommended way to install ggmap package
-```
 
-```{r}
 library(tidyverse)
 #set up data set. 
 usgrant <- list(name = "THE US GRANT, a Luxury Collection Hotel, San Diego", type = "hotel", short = "Luxury Collection")
@@ -18,9 +16,7 @@ ot <- list(name = "4002 Wallace St, San Diego, CA 92110", hour = 4, type = "plac
 ap <- list(name = "san diego airport", type = "airport", short = "airport")
 
 place <- bind_rows(bal, midway, coro, cab, ljc, ot, auto, usgrant, cy, ap)
-```
 
-```{r}
 library(ggmap)
 register_google(key = "my_google_key_here") #use your key!
 library(ggrepel)
@@ -31,9 +27,7 @@ ggmap(get_map(location = 'san diego', zoom = 11)) +
   geom_label_repel(data = place, aes(label = short, color = type), force = 8, nudge_x = 1) +
   geom_point(data = place, aes(lon, lat, color = type))
 #https://cran.r-project.org/web/packages/ggrepel/vignettes/ggrepel.html
-```
 
-```{r}
 #algorithm: suppose I'll visit these places in either day 1 or day 2, so set the value of these places either 1 or 2. Permutate to get the combination of visit plan, if the value of a place is 1, retrieve the visiting hours from "place" matrix. Sum up the hours, it is the hours I will use in a day. Filter out the hours more than 10 or less than 8, the remainings are feasible plans. 
 library(gtools)
 
@@ -64,9 +58,7 @@ plan <- plan %>%
   filter(day1 >= 8 & day1 <= 10 & day2 >= 8 & day2 <= 10)
 #head(plan)
 nrow(plan) #24
-```
 
-```{r}
 #algorithm: read each row in plan, make all of possible route combinations for each day.
 day_1 <- list()
 day_2 <- list()
@@ -80,9 +72,7 @@ for (i in 1:nrow(plan)) {
            v = names(plan)[which(plan[i, ] == 2, arr.ind=T)[, "col"]]), stringsAsFactors = FALSE)
 }
 #https://stackoverflow.com/questions/53625126/how-to-create-data-frames-not-just-one-at-once-in-r
-```
 
-```{r}
 #replace the abbr by the address
 for (i in 1:length(day_1)) {
   for (j in 1:length(day_1[[i]])) {
@@ -108,9 +98,7 @@ for (i in 1:length(day_2)) {
     }
   }
 }
-```
 
-```{r, message=FALSE}
 start <- place$name[7]
 end1 <- place$name[8]
 end2 <- place$name[9]
@@ -147,9 +135,7 @@ for (i in 1:length(day_2)) {
     do(compute_route_time(., start = end1, end = end2))
 }
 #https://stackoverflow.com/questions/53662127/non-numeric-argument-to-binary-operator-in-ggmap
-```
 
-```{r}
 route_1 <- list()
 route_2 <- list()
 total_time <- NULL
@@ -194,9 +180,7 @@ for (i in 1:(length(route_2[[max]]) + 1)) {
     plan_2$location[i] <- "Courtyard San Diego Airport/Liberty Station"
   }
 }
-```
 
-```{r}
 legs_df_1 <- list()
 for (i in 1:(nrow(plan_1) - 1)) {
   legs_df_1[[i]] <- route(from = as.character(plan_1$location[i]), to = as.character(plan_1$location[i + 1]), alternatives = FALSE, mode = "driving", structure = "leg")
@@ -225,9 +209,6 @@ for (i in 1:length(legs_df_2)) {
   }
 }
 
-```
-
-```{r}
 ggmap(get_map(location = 'san diego', zoom = 13)) +
   geom_label_repel(data = place, aes(label = short, color = type), force = 5, nudge_x = 1) +
   geom_point(data = place, aes(lon, lat, color = type)) +
@@ -257,5 +238,3 @@ ggmap(get_map(location = 'san diego', zoom = 11)) +
   geom_label_repel(aes(x = startLon, y = startLat), data = final_2, label = final_2$id) +
   ggtitle("Day 2") +
   theme(plot.title = element_text(colour = "red", size = 20, face = "bold"))
-```
-
