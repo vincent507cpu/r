@@ -20,7 +20,7 @@ place <- bind_rows(bal, midway, coro, cab, ljc, ot, auto, usgrant, cy, ap)
 library(ggmap)
 register_google(key = "my_google_key_here") #use your key!
 library(ggrepel)
-
+#get the map of San Diego with targeted places marked
 geoc <- geocode(place$name)
 place <- bind_cols(place, geoc)
 ggmap(get_map(location = 'san diego', zoom = 11)) +
@@ -28,15 +28,18 @@ ggmap(get_map(location = 'san diego', zoom = 11)) +
   geom_point(data = place, aes(lon, lat, color = type))
 #https://cran.r-project.org/web/packages/ggrepel/vignettes/ggrepel.html
 
-#algorithm: suppose I'll visit these places in either day 1 or day 2, so set the value of these places either 1 or 2. Permutate to get the combination of visit plan, if the value of a place is 1, retrieve the visiting hours from "place" matrix. Sum up the hours, it is the hours I will use in a day. Filter out the hours more than 10 or less than 8, the remainings are feasible plans. 
+#algorithm: suppose I'll visit these places in either day 1 or day 2,
+#so set the value of these places either 1 or 2. Permutate to get the combination of visit plan, 
+#if the value of a place is 1, retrieve the visiting hours from "place" matrix. Sum up the hours, 
+#it is the hours I will use in a day. Filter out the hours more than 10 or less than 8, the remainings are feasible plans. 
 library(gtools)
 
 lst1 <- c("bal", "midway", "coro", "cab", "ljc", "ot")
 lst2 <- c(lst1, "auto", "lux", "cy", "ap")
-plan <- permutations(2, 6, v=c(1, 2), repeats.allowed = T)
+plan <- permutations(2, 6, v=c(1, 2), repeats.allowed = T)#generate combinations
 #https://stackoverflow.com/questions/53604144/unordered-combination-and-store-the-result-in-a-matrix-in-r
-colnames(plan) <- lst1
-row.names(place) <- lst2
+colnames(plan) <- lst1#name the column names
+rownames(place) <- lst2#name the row names
 day1 <- c(rep(0, nrow(plan)))
 names(day1) <- "day1"
 day2 <- c(rep(0, nrow(plan)))
