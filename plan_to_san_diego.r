@@ -30,8 +30,8 @@ ggmap(get_map(location = 'san diego', zoom = 11)) +
 
 #algorithm: suppose I'll visit these places in either day 1 or day 2,
 #so set the value of these places either 1 or 2. Permutate to get the combination of visit plan, 
-#if the value of a place is 1, retrieve the visiting hours from "place" matrix. Sum up the hours, 
-#it is the hours I will use in day 1. Do the same thing for day 2. 
+#if the value of a place is 1, retrieve the visiting hours from "place" matrix. 
+#Sum up the hours, it is the hours I will use in day 1. Do the same thing for day 2. 
 #Filter out the hours more than 10 or less than 8, the remainings are feasible plans. 
 library(gtools)
 
