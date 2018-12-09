@@ -107,6 +107,7 @@ start <- place$name[7]
 end1 <- place$name[8]
 end2 <- place$name[9]
 
+#Credit for the following function to Erin
 compute_route_time = function(row, start, end) {
   # get a vector of stops that you can loop through
   stops = unlist(row)
