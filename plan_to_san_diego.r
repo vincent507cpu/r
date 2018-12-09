@@ -16,7 +16,7 @@ ot <- list(name = "4002 Wallace St, San Diego, CA 92110", hour = 4, type = "plac
 ap <- list(name = "san diego airport", type = "airport", short = "airport")
 
 place <- bind_rows(bal, midway, coro, cab, ljc, ot, auto, usgrant, cy, ap)
-
+#complete the data preparation
 library(ggmap)
 register_google(key = "my_google_key_here") #use your key!
 library(ggrepel)
@@ -31,7 +31,8 @@ ggmap(get_map(location = 'san diego', zoom = 11)) +
 #algorithm: suppose I'll visit these places in either day 1 or day 2,
 #so set the value of these places either 1 or 2. Permutate to get the combination of visit plan, 
 #if the value of a place is 1, retrieve the visiting hours from "place" matrix. Sum up the hours, 
-#it is the hours I will use in a day. Filter out the hours more than 10 or less than 8, the remainings are feasible plans. 
+#it is the hours I will use in day 1. Do the same thing for day 2. 
+#Filter out the hours more than 10 or less than 8, the remainings are feasible plans. 
 library(gtools)
 
 lst1 <- c("bal", "midway", "coro", "cab", "ljc", "ot")
@@ -40,12 +41,12 @@ plan <- permutations(2, 6, v=c(1, 2), repeats.allowed = T)#generate combinations
 #https://stackoverflow.com/questions/53604144/unordered-combination-and-store-the-result-in-a-matrix-in-r
 colnames(plan) <- lst1#name the column names
 rownames(place) <- lst2#name the row names
-day1 <- c(rep(0, nrow(plan)))
-names(day1) <- "day1"
-day2 <- c(rep(0, nrow(plan)))
-names(day2) <- "day2"
+day1 <- c(rep(0, nrow(plan)))#create a column to store total hours in day 1
+names(day1) <- "day1"#name the column of day 1
+day2 <- c(rep(0, nrow(plan)))#create a column to store total hours in day 2
+names(day2) <- "day2"#name the column of day 2
 plan <- as.data.frame(plan) #has to convert from matrix to data frame
-plan <- cbind(plan, day1, day2)
+plan <- cbind(plan, day1, day2)#bind three data frames
 for(i in 1:nrow(plan)){
   for (j in 1:6) {
     if(plan[i, j] == 1){
@@ -58,18 +59,18 @@ for(i in 1:nrow(plan)){
 } #calculate the sum of hours for each day
 nrow(plan) #64
 plan <- plan %>%
-  filter(day1 >= 8 & day1 <= 10 & day2 >= 8 & day2 <= 10)
-#head(plan)
+  filter(day1 >= 8 & day1 <= 10 & day2 >= 8 & day2 <= 10)#filter out unfeasible plan
 nrow(plan) #24
 
-#algorithm: read each row in plan, make all of possible route combinations for each day.
+#algorithm: read each row in plan, make all of possible route combinations for each day, 
+#replace value of 1 and 2 by abbr value in place.
 day_1 <- list()
 day_2 <- list()
 for (i in 1:nrow(plan)) {
   j <- sum(plan[i, ] == 1)
   day_1[[i]] <- data.frame(permutations(j, j, 
            v = names(plan)[which(plan[i, ] == 1, arr.ind=T)[, "col"]]), stringsAsFactors = FALSE)
-  #https://stackoverflow.com/questions/36960010/get-column-name-that-matches-specific-row-value-in-dataframe
+#https://stackoverflow.com/questions/36960010/get-column-name-that-matches-specific-row-value-in-dataframe
   k <- sum(plan[i, ] == 2)
   day_2[[i]] <- data.frame(permutations(k, k, 
            v = names(plan)[which(plan[i, ] == 2, arr.ind=T)[, "col"]]), stringsAsFactors = FALSE)
@@ -101,7 +102,7 @@ for (i in 1:length(day_2)) {
     }
   }
 }
-
+#algorithm: calculate the time of driving in each route.
 start <- place$name[7]
 end1 <- place$name[8]
 end2 <- place$name[9]
@@ -138,20 +139,22 @@ for (i in 1:length(day_2)) {
     do(compute_route_time(., start = end1, end = end2))
 }
 #https://stackoverflow.com/questions/53662127/non-numeric-argument-to-binary-operator-in-ggmap
-
+#Find out the shortest time. This route will be the best traveling route.
+#find the shortest route, overwrite the list, only keep the best route for each plan
 route_1 <- list()
 route_2 <- list()
-total_time <- NULL
+total_time <- NULL #empty vector for storing times for each plan
 for (i in 1:length(day_1)) {
   route_1[[i]] <- day_1[[i]][which.min(day_1[[i]]$time),]
   route_2[[i]] <- day_2[[i]][which.min(day_2[[i]]$time),]
   total_time <- c(total_time, route_1[[i]]$time + route_2[[i]]$time)
 }
-#find the shortest route
-(max <- which.min(total_time)) #1
 
-plan_1 <- data.frame(matrix(ncol = 2, nrow = length(route_1[[max]]) + 1))
-colnames(plan_1) <- c("id", "location")
+(max <- which.min(total_time)) #1
+#transform route condidate info for getting route and plot later
+plan_1 <- data.frame(matrix(ncol = 2, nrow = length(route_1[[max]]) + 1))#create an empty data frame
+colnames(plan_1) <- c("id", "location")#set up the column name
+#fill location info and sequence of traveling
 for (i in 1:(length(route_1[[max]]) + 1)) {
   if(i == 1){
     plan_1$id[1] <- 1
@@ -183,7 +186,7 @@ for (i in 1:(length(route_2[[max]]) + 1)) {
     plan_2$location[i] <- "Courtyard San Diego Airport/Liberty Station"
   }
 }
-
+#get route info
 legs_df_1 <- list()
 for (i in 1:(nrow(plan_1) - 1)) {
   legs_df_1[[i]] <- route(from = as.character(plan_1$location[i]), to = as.character(plan_1$location[i + 1]), alternatives = FALSE, mode = "driving", structure = "leg")
@@ -211,7 +214,7 @@ for (i in 1:length(legs_df_2)) {
     final_2 <- bind_rows(final_2, legs_df_2[[i]][which.min(legs_df_2[[i]]$seconds),])
   }
 }
-
+#plot
 ggmap(get_map(location = 'san diego', zoom = 13)) +
   geom_label_repel(data = place, aes(label = short, color = type), force = 5, nudge_x = 1) +
   geom_point(data = place, aes(lon, lat, color = type)) +
