@@ -20,7 +20,7 @@ place <- bind_rows(bal, midway, coro, cab, ljc, ot, auto, usgrant, cy, ap)
 library(ggmap)
 register_google(key = "my_google_key_here") #use your key!
 library(ggrepel)
-#get the map of San Diego with targeted places marked
+#plot the map of San Diego with targeted places marked
 geoc <- geocode(place$name)
 place <- bind_cols(place, geoc)
 ggmap(get_map(location = 'san diego', zoom = 11)) +
