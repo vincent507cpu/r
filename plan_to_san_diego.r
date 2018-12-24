@@ -151,7 +151,7 @@ for (i in 1:length(day_2)) {
     do(compute_route_time(., start = end1, end = end2))
 }
 # https://stackoverflow.com/questions/53662127/non-numeric-argument-to-binary-operator-in-ggmap
-##################################################################################
+######################################################################################
 
 # Find out the shortest time. This route will be the best traveling route.
 # Find the shortest route, overwrite the list, only keep the best route for each plan
