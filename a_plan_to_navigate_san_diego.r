@@ -18,7 +18,7 @@ midway <-list(name = "USS Midway, san diego, ca", hour = 2, type = "place", shor
 coro <- list(name = "Coronado, san diego, ca", hour = 4, type = "place", short = "Coronado", abbr = "coro")
 cab <- list(name = "Cabrillo National Monument, san diego, ca", hour = 2, type = "place", short = "Cabrillo", abbr = "cab")
 ljc <- list(name = "La Jolla Cove, san diego, ca", hour = 2, type = "place", short = "La Jolla", abbr = "ljc")
-ot <- list(name = "4002 Wallace St, San Diego, CA 92110", hour = 4, type = "place", short = "Old Town", abbr = "ot") #Old Town
+ot <- list(name = "4002 Wallace St, San Diego, CA 92110", hour = 4, type = "place", short = "Old Town", abbr = "ot")
 ap <- list(name = "san diego airport", type = "airport", short = "airport")
 # Complete the data preparation
 place <- bind_rows(bal, midway, coro, cab, ljc, ot, auto, usgrant, cy, ap)
