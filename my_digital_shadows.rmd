@@ -66,11 +66,15 @@ mr %>%
 ```
 
 ```{r}
-mr %>%
-  filter(Description == "Spend Reward", !is.na(multiple)) %>%
+rate <- mr %>%
+  filter(Description == "Spend Reward") %>%
   group_by(multiple) %>%
-  summarise(`Multiple Earn` = sum(points, na.rm = T), `General Earn` = sum(Points, na.rm = T) - `Multiple Earn`) %>%
-  gather(-multiple, key = `earn rate`, value = `points earned`) %>%
+  summarise(`Multiple Earn` = sum(points, na.rm = T), `General Earn` = sum(Points, na.rm = T) - `Multiple Earn`)
+rate[5, 1] <- "1X"
+rate<- rate %>%
+  gather(-multiple, key = `earn rate`, value = `points earned`)
+rate <- rate[-5, ]
+rate %>%
   ggplot(aes(multiple, `points earned`, fill = `earn rate`)) +
     geom_col(position = "dodge") +
     geom_label_repel(aes(multiple, `points earned`, label = paste(`points earned`, "points")), show.legend = F) +
@@ -142,3 +146,11 @@ ggplot(credit, aes(Description, Total, fill = type)) +
   theme(panel.grid.minor.y = element_blank(), axis.text.x = element_text(angle = 90, hjust = 1), axis.title.x = element_blank())
 ```
 
+```{r}
+spend <- charge %>%
+  group_by(Description) %>%
+  summarise(Spend = sum(Amount))
+dist(spend$Spend, method = "euclidean") %>%
+  hclust(method = "average") %>%
+  plot()
+```
