@@ -145,12 +145,3 @@ ggplot(credit, aes(Description, Total, fill = type)) +
   ggtitle(label = "Credit Card Reimbursement") +
   theme(panel.grid.minor.y = element_blank(), axis.text.x = element_text(angle = 90, hjust = 1), axis.title.x = element_blank())
 ```
-
-```{r}
-spend <- charge %>%
-  group_by(Description) %>%
-  summarise(Spend = sum(Amount))
-dist(spend$Spend, method = "euclidean") %>%
-  hclust(method = "average") %>%
-  plot()
-```
